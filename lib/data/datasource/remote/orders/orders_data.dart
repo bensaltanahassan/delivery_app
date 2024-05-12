@@ -21,18 +21,6 @@ class OrdersData {
     return response.fold((l) => l, (r) => r);
   }
 
-  addOrders(
-      {required String token,
-      required Map<String, dynamic> data,
-      required String userId}) async {
-    var response = await crud.postData(
-      linkUrl: AppLinks.checkout,
-      token: token,
-      data: data,
-    );
-    return response.fold((l) => l, (r) => r);
-  }
-
   updateOrders(
       {required String token,
       required Map<String, dynamic> data,

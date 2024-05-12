@@ -1,23 +1,24 @@
-import 'package:delivery_app/controllers/orders/orders_controller.dart';
+import 'package:delivery_app/controllers/deliveries/deliveries_controller.dart';
 import 'package:delivery_app/core/constant/colors.dart';
 import 'package:delivery_app/core/constant/constants.dart';
 import 'package:delivery_app/core/enums/delivery_status.dart';
+import 'package:delivery_app/data/model/get_deliveries_model.dart';
+import 'package:delivery_app/view/widgets/deliveries/custom_delivery.dart';
 import 'package:delivery_app/view/widgets/drawer/drawer.dart';
-import 'package:delivery_app/view/widgets/orders/custom_order.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-class OrdersPage extends StatelessWidget {
-  const OrdersPage({super.key});
+class DeliveriesPage extends StatelessWidget {
+  const DeliveriesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    OrdersController controller = Get.put(OrdersController());
+    DeliveriesController controller = Get.put(DeliveriesController());
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Orders'),
+          title: const Text('Deliveries'),
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
@@ -42,7 +43,7 @@ class OrdersPage extends StatelessWidget {
                 margin: EdgeInsets.only(bottom: 10.h, top: 10.h),
                 child: SearchBar(
                     controller: controller.searchController,
-                    hintText: "Search for orders",
+                    hintText: "Search for Delivery",
                     onChanged: (value) {},
                     trailing: [
                       IconButton(
@@ -51,59 +52,50 @@ class OrdersPage extends StatelessWidget {
                       )
                     ]),
               ),
-              GetBuilder<OrdersController>(
+              GetBuilder<DeliveriesController>(
                   id: "status",
                   builder: (controller) {
                     return Wrap(
                       spacing: 10.w,
                       children: <String>[
-                        "All",
                         ...DeliveryStatus.values
-                            .map((e) => e.toString())
+                            .map((e) =>
+                                e.toString().split(".").last.capitalizeFirst!)
                             .toList()
                       ].map((e) {
                         return ChoiceChip(
-                          label: Text(e),
-                          selected: controller.selectedStatus.value == e,
-                          onSelected: (bool selected) {
-                            controller.changeStatus(DeliveryStatus.values
-                                .firstWhere(
-                                    (element) => element.toString() == e));
-                          },
-                        );
+                            label: Text(e),
+                            selected: controller.selectedStatus
+                                    .toString()
+                                    .split(".")
+                                    .last
+                                    .capitalizeFirst ==
+                                e,
+                            onSelected: (bool selected) {
+                              controller.changeStatus(DeliveryStatus.values
+                                  .firstWhere((element) =>
+                                      element
+                                          .toString()
+                                          .split(".")
+                                          .last
+                                          .toLowerCase() ==
+                                      e.toLowerCase()));
+                            });
                       }).toList(),
                     );
                   }),
               SizedBox(height: 10.h),
               Expanded(
-                child: GetBuilder<OrdersController>(
-                  id: "orders",
+                child: GetBuilder<DeliveriesController>(
+                  id: "deliveries",
                   builder: (controller) {
-                    return PagedListView<int, String>(
+                    return PagedListView<int, Delivery>(
                       pagingController: controller.pagingController,
-                      builderDelegate: PagedChildBuilderDelegate<String>(
-                        itemBuilder: (context, item, i) => CustomOrder(
-                          id: i,
-                          status: item,
-                        ),
+                      builderDelegate: PagedChildBuilderDelegate<Delivery>(
+                        itemBuilder: (context, item, i) =>
+                            CustomDelivery(delivery: item),
                       ),
                     );
-                    // ListView.separated(
-                    //   physics: const BouncingScrollPhysics(),
-                    //   itemCount: 20,
-                    //   separatorBuilder: (BuildContext context, int index) {
-                    //     return SizedBox(height: 10.h);
-                    //   },
-                    //   itemBuilder: (BuildContext context, int i) {
-                    //     return CustomOrder(
-                    //       status: i % 3 == 0
-                    //           ? "Pending"
-                    //           : i % 2 == 0
-                    //               ? "Shipping"
-                    //               : "Delivered",
-                    //     );
-                    //   },
-                    // );
                   },
                 ),
               ),

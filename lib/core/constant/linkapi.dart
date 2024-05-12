@@ -1,7 +1,7 @@
 class AppLinks {
   // server
   // static const String server = "http://10.0.2.2:5000";
-  static const String server = "https://backend-ecommerce-i4gg.onrender.com";
+  static const String server = "http://10.0.2.2:5241/api";
   static const String image = "$server/media";
 
   // test
@@ -49,8 +49,8 @@ class AppLinks {
   //=============Coupons=================
   static const String coupons = "$server/coupons";
 
-  //=============Coupons=================
-  static const String checkout = "$server/checkout";
+  //=============Delivries=================
+  static const String deliveries = "$server/Delivries";
 
   //Settings
   static const String changeEmail = "$server/settings/changeemail";
