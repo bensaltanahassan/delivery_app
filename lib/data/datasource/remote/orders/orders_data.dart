@@ -11,12 +11,9 @@ class OrdersData {
     return reponse.fold((l) => l, (r) => r);
   }
 
-  getSingleOrder(
-      {required String token,
-      required String userId,
-      required String orderId}) async {
+  getSingleOrder({required String token, required String orderId}) async {
     var response = await crud.getData(
-        linkUrl: "${AppLinks.orders}/$userId/$orderId", token: token);
+        linkUrl: "${AppLinks.orders}/$orderId", token: token);
 
     return response.fold((l) => l, (r) => r);
   }

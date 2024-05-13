@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-
 class GetDeliveriesModel {
   bool? status;
   int? totalDeliveries;
@@ -39,7 +37,7 @@ class Delivery {
   String? createdAt;
   String? updatedAt;
   int? deliveryManId;
-  Object? deliveryMan;
+  DeliveryMan? deliveryMan;
   int? orderId;
   Order? order;
 
@@ -56,12 +54,12 @@ class Delivery {
   Delivery.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     status = json['status'];
-    createdAt =
-        DateFormat('dd/MM/yyyy').format(DateTime.parse(json['createdAt']));
-    updatedAt =
-        DateFormat('dd/MM/yyyy').format(DateTime.parse(json['updatedAt']));
+    createdAt = json['createdAt'];
+    updatedAt = json['updatedAt'];
     deliveryManId = json['deliveryManId'];
-    deliveryMan = json['deliveryMan'];
+    deliveryMan = json['deliveryMan'] != null
+        ? DeliveryMan.fromJson(json['deliveryMan'])
+        : null;
     orderId = json['orderId'];
     order = json['order'] != null ? Order.fromJson(json['order']) : null;
   }
@@ -73,11 +71,58 @@ class Delivery {
     data['createdAt'] = createdAt;
     data['updatedAt'] = updatedAt;
     data['deliveryManId'] = deliveryManId;
-    data['deliveryMan'] = deliveryMan;
+    if (deliveryMan != null) {
+      data['deliveryMan'] = deliveryMan!.toJson();
+    }
     data['orderId'] = orderId;
     if (order != null) {
       data['order'] = order!.toJson();
     }
+    return data;
+  }
+}
+
+class DeliveryMan {
+  int? id;
+  String? email;
+  String? fullName;
+  String? phoneNumber;
+  String? password;
+  String? status;
+  String? createdAt;
+  String? updatedAt;
+
+  DeliveryMan(
+      {this.id,
+      this.email,
+      this.fullName,
+      this.phoneNumber,
+      this.password,
+      this.status,
+      this.createdAt,
+      this.updatedAt});
+
+  DeliveryMan.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    email = json['email'];
+    fullName = json['fullName'];
+    phoneNumber = json['phoneNumber'];
+    password = json['password'];
+    status = json['status'];
+    createdAt = json['createdAt'];
+    updatedAt = json['updatedAt'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['email'] = email;
+    data['fullName'] = fullName;
+    data['phoneNumber'] = phoneNumber;
+    data['password'] = password;
+    data['status'] = status;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
     return data;
   }
 }
@@ -93,7 +138,7 @@ class Order {
   String? createdAt;
   String? updatedAt;
   int? userId;
-  Object? user;
+  User? user;
   Object? orderItems;
 
   Order(
@@ -118,12 +163,10 @@ class Order {
     paymentMethod = json['paymentMethod'];
     paymentStatus = json['paymentStatus'];
     orderStatus = json['orderStatus'];
-    createdAt =
-        DateFormat('dd/MM/yyyy').format(DateTime.parse(json['createdAt']));
-    updatedAt =
-        DateFormat('dd/MM/yyyy').format(DateTime.parse(json['updatedAt']));
+    createdAt = json['createdAt'];
+    updatedAt = json['updatedAt'];
     userId = json['userId'];
-    user = json['user'];
+    user = json['user'] != null ? User.fromJson(json['user']) : null;
     orderItems = json['orderItems'];
   }
 
@@ -139,8 +182,79 @@ class Order {
     data['createdAt'] = createdAt;
     data['updatedAt'] = updatedAt;
     data['userId'] = userId;
-    data['user'] = user;
+    if (user != null) {
+      data['user'] = user!.toJson();
+    }
     data['orderItems'] = orderItems;
+    return data;
+  }
+}
+
+class User {
+  int? id;
+  String? email;
+  String? fullName;
+  String? phone;
+  String? address;
+  Object? password;
+  bool? isVerified;
+  Object? emailVerificationToken;
+  Object? resetCode;
+  Object? resetCodeExpiry;
+  String? createdAt;
+  String? updatedAt;
+  Object? imageId;
+  Object? image;
+
+  User(
+      {this.id,
+      this.email,
+      this.fullName,
+      this.phone,
+      this.address,
+      this.password,
+      this.isVerified,
+      this.emailVerificationToken,
+      this.resetCode,
+      this.resetCodeExpiry,
+      this.createdAt,
+      this.updatedAt,
+      this.imageId,
+      this.image});
+
+  User.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    email = json['email'];
+    fullName = json['fullName'];
+    phone = json['phone'];
+    address = json['address'];
+    password = json['password'];
+    isVerified = json['isVerified'];
+    emailVerificationToken = json['emailVerificationToken'];
+    resetCode = json['resetCode'];
+    resetCodeExpiry = json['resetCodeExpiry'];
+    createdAt = json['createdAt'];
+    updatedAt = json['updatedAt'];
+    imageId = json['imageId'];
+    image = json['image'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['email'] = email;
+    data['fullName'] = fullName;
+    data['phone'] = phone;
+    data['address'] = address;
+    data['password'] = password;
+    data['isVerified'] = isVerified;
+    data['emailVerificationToken'] = emailVerificationToken;
+    data['resetCode'] = resetCode;
+    data['resetCodeExpiry'] = resetCodeExpiry;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
+    data['imageId'] = imageId;
+    data['image'] = image;
     return data;
   }
 }

@@ -55,33 +55,42 @@ class DeliveriesPage extends StatelessWidget {
               GetBuilder<DeliveriesController>(
                   id: "status",
                   builder: (controller) {
-                    return Wrap(
-                      spacing: 10.w,
-                      children: <String>[
-                        ...DeliveryStatus.values
-                            .map((e) =>
-                                e.toString().split(".").last.capitalizeFirst!)
-                            .toList()
-                      ].map((e) {
-                        return ChoiceChip(
-                            label: Text(e),
-                            selected: controller.selectedStatus
+                    return SizedBox(
+                      width: double.infinity,
+                      child: SegmentedButton<String>(
+                        showSelectedIcon: false,
+                        style: SegmentedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.r)),
+                          selectedBackgroundColor: AppColors.primaryColor,
+                          backgroundColor: AppColors.whiteColor,
+                          foregroundColor: AppColors.primaryColor,
+                          selectedForegroundColor: AppColors.whiteColor,
+                        ),
+                        selected: controller.selectedStatusStringSet,
+                        onSelectionChanged: (p0) => controller.changeStatus(
+                            DeliveryStatus.values.firstWhere((element) =>
+                                element
                                     .toString()
                                     .split(".")
                                     .last
                                     .capitalizeFirst ==
-                                e,
-                            onSelected: (bool selected) {
-                              controller.changeStatus(DeliveryStatus.values
-                                  .firstWhere((element) =>
-                                      element
-                                          .toString()
-                                          .split(".")
-                                          .last
-                                          .toLowerCase() ==
-                                      e.toLowerCase()));
-                            });
-                      }).toList(),
+                                p0.first)),
+                        segments: DeliveryStatus.values
+                            .map((e) => ButtonSegment<String>(
+                                  label: Text(e
+                                      .toString()
+                                      .split(".")
+                                      .last
+                                      .capitalizeFirst!),
+                                  value: e
+                                      .toString()
+                                      .split(".")
+                                      .last
+                                      .capitalizeFirst!,
+                                ))
+                            .toList(),
+                      ),
                     );
                   }),
               SizedBox(height: 10.h),
@@ -92,8 +101,11 @@ class DeliveriesPage extends StatelessWidget {
                     return PagedListView<int, Delivery>(
                       pagingController: controller.pagingController,
                       builderDelegate: PagedChildBuilderDelegate<Delivery>(
-                        itemBuilder: (context, item, i) =>
-                            CustomDelivery(delivery: item),
+                        itemBuilder: (context, item, i) => CustomDelivery(
+                          delivery: item,
+                          onPressed: () =>
+                              controller.goToOrderDetails(item.order!.id!),
+                        ),
                       ),
                     );
                   },

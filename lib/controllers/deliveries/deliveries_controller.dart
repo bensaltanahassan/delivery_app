@@ -1,5 +1,6 @@
 import 'package:delivery_app/core/class/crud.dart';
 import 'package:delivery_app/core/class/statusrequest.dart';
+import 'package:delivery_app/core/constant/routes.dart';
 import 'package:delivery_app/core/enums/delivery_status.dart';
 import 'package:delivery_app/core/functions/handlingdatacontroller.dart';
 import 'package:delivery_app/data/datasource/remote/deliveries/deliveries_data.dart';
@@ -11,6 +12,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 class DeliveriesController extends GetxController {
   DeliveryStatus selectedStatus = DeliveryStatus.All;
   String get selectedStatusString => selectedStatus.toString().split(".").last;
+  Set<String> get selectedStatusStringSet => {selectedStatusString};
   final searchController = TextEditingController();
   final _pageSize = 10;
   DeliveriesData deliveriesData = DeliveriesData(Get.find<Crud>());
@@ -76,5 +78,9 @@ class DeliveriesController extends GetxController {
     searchController.dispose();
     pagingController.dispose();
     super.onClose();
+  }
+
+  void goToOrderDetails(int orderId) {
+    Get.toNamed(AppRoutes.orderdetails, arguments: {"orderId": orderId});
   }
 }
