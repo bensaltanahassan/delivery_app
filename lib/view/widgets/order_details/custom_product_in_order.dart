@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delivery_app/core/constant/colors.dart';
 import 'package:delivery_app/core/constant/imageassets.dart';
 import 'package:delivery_app/data/model/order_details_model.dart'
@@ -19,7 +20,13 @@ class CustomProductInOrder extends StatelessWidget {
       textColor: AppColors.whiteColor,
       leading: ClipRRect(
           borderRadius: BorderRadius.circular(10).r,
-          child: Image.asset(AppImageAsset.pizza)),
+          child: CachedNetworkImage(
+            imageUrl: orderItem.product?.productImages?[0].image?.url ??
+                AppImageAsset.notAvailableImage,
+            fit: BoxFit.cover,
+            width: 60.w,
+            height: 60.h,
+          )),
       title: Text(
         orderItem.product?.name ?? "",
         style: TextStyle(

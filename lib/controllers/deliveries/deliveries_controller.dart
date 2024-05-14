@@ -39,6 +39,7 @@ class DeliveriesController extends GetxController {
       limit: _pageSize,
       deliveryStatus:
           selectedStatus == DeliveryStatus.All ? null : selectedStatusString,
+      deliveryId: int.tryParse(searchController.text),
     );
     statusRequest = handlingData(response);
     if (statusRequest == StatusRequest.success) {
@@ -80,7 +81,14 @@ class DeliveriesController extends GetxController {
     super.onClose();
   }
 
-  void goToOrderDetails(int orderId) {
-    Get.toNamed(AppRoutes.orderdetails, arguments: {"orderId": orderId});
+  void goToOrderDetails(int orderId, int deliveryId) {
+    Get.toNamed(AppRoutes.orderdetails, arguments: {
+      "orderId": orderId,
+      "deliveryId": deliveryId,
+    });
+  }
+
+  void search() {
+    pagingController.refresh();
   }
 }

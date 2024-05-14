@@ -41,6 +41,7 @@ class Crud {
   Future<Either<StatusRequest, Map>> postData(
       {required String linkUrl,
       required Object data,
+      Map<String, dynamic>? queryParameters,
       String? token = ''}) async {
     try {
       Map<String, String> requestHeaders = {
@@ -55,6 +56,7 @@ class Crud {
           headers: requestHeaders,
           validateStatus: (status) => true,
         ),
+        queryParameters: queryParameters,
       );
 
       if (response.statusCode != 500) {
@@ -72,6 +74,7 @@ class Crud {
     required String linkUrl,
     required Object data,
     String token = '',
+    Map<String, dynamic>? queryParameters,
   }) async {
     try {
       // if (await checkInternet()) {
@@ -87,6 +90,7 @@ class Crud {
           headers: requestHeaders,
           validateStatus: (status) => true,
         ),
+        queryParameters: queryParameters,
       );
 
       if (response.statusCode != 500) {

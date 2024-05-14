@@ -15,7 +15,7 @@ class DeliveriesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DeliveriesController controller = Get.put(DeliveriesController());
+    final controller = Get.put(DeliveriesController());
     return Scaffold(
         appBar: AppBar(
           title: const Text('Deliveries'),
@@ -43,12 +43,15 @@ class DeliveriesPage extends StatelessWidget {
                 margin: EdgeInsets.only(bottom: 10.h, top: 10.h),
                 child: SearchBar(
                     controller: controller.searchController,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      signed: false,
+                      decimal: false,
+                    ),
                     hintText: "Search for Delivery",
-                    onChanged: (value) {},
                     trailing: [
                       IconButton(
                         icon: const Icon(Icons.search),
-                        onPressed: () {},
+                        onPressed: controller.search,
                       )
                     ]),
               ),
@@ -101,10 +104,27 @@ class DeliveriesPage extends StatelessWidget {
                     return PagedListView<int, Delivery>(
                       pagingController: controller.pagingController,
                       builderDelegate: PagedChildBuilderDelegate<Delivery>(
+                        noItemsFoundIndicatorBuilder: (context) => Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.delivery_dining_outlined,
+                              size: 100,
+                              color: AppColors.primaryColor,
+                            ),
+                            Text(
+                              "No Deliveries Found",
+                              style: TextStyle(
+                                color: AppColors.primaryColor,
+                                fontSize: 20.sp,
+                              ),
+                            ),
+                          ],
+                        ),
                         itemBuilder: (context, item, i) => CustomDelivery(
                           delivery: item,
-                          onPressed: () =>
-                              controller.goToOrderDetails(item.order!.id!),
+                          onPressed: () => controller.goToOrderDetails(
+                              item.order!.id!, item.id!),
                         ),
                       ),
                     );

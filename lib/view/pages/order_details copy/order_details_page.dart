@@ -41,11 +41,17 @@ class OrderDetailsPage extends StatelessWidget {
                   child: Column(
                     children: [
                       GetBuilder<OrderDetailsController>(
-                          id: "statusIndex",
+                          id: "orderStatus",
                           builder: (controller) {
                             return EasyStepper(
-                              activeStep: controller.currentStatusIndex.value,
-                              onStepReached: (index) {},
+                              activeStep: controller.currentStatusIndex,
+                              onStepReached: (index) {
+                                if (index == 2 &&
+                                    controller.order!.orderStatus ==
+                                        "Shipping") {
+                                  controller.markAsDelivered();
+                                }
+                              },
                               showLoadingAnimation: false,
                               finishedStepBackgroundColor: Colors.transparent,
                               activeStepTextColor: Colors.black87,
@@ -63,57 +69,46 @@ class OrderDetailsPage extends StatelessWidget {
                                   title: "Shipping",
                                   icon: Icons.local_shipping,
                                   isActive: true,
-                                  isDone:
-                                      controller.currentStatusIndex.value > 1,
+                                  isDone: controller.currentStatusIndex > 1,
                                 ),
                                 customStep(
                                   title: "Delivered",
                                   icon: Icons.delivery_dining,
-                                  isActive:
-                                      controller.currentStatusIndex.value > 1,
-                                  isDone:
-                                      controller.currentStatusIndex.value >= 2,
+                                  isActive: controller.currentStatusIndex > 1,
+                                  isDone: controller.currentStatusIndex >= 2,
+                                  statusRequest:
+                                      controller.statusRequestOfDeliveryStatus,
                                 ),
                               ],
                             );
                           }),
                       SizedBox(height: (AppDimensions.mainSpacing).h),
                       CustomListTileOrderDetails(
-                          title: "Address",
-                          subtitle:
-                              c.getOrderDetailsModel?.order?.adress ?? ""),
+                          title: "Address", subtitle: c.order?.adress ?? ""),
                       SizedBox(height: (AppDimensions.mainSpacing).h),
                       Row(
                         children: [
                           Expanded(
                             child: CustomListTileOrderDetails(
                                 title: "Phone",
-                                subtitle: c.getOrderDetailsModel?.order
-                                        ?.phoneNumber ??
-                                    ""),
+                                subtitle: c.order?.phoneNumber ?? ""),
                           ),
                           SizedBox(width: (AppDimensions.mainSpacing).w),
                           Expanded(
                             child: CustomListTileOrderDetails(
                                 title: "Date",
-                                subtitle: formatDate(c
-                                        .getOrderDetailsModel?.order?.createdAt
-                                        .toString() ??
-                                    "")),
+                                subtitle: formatDate(
+                                    c.order?.createdAt.toString() ?? "")),
                           )
                         ],
                       ),
                       SizedBox(height: (AppDimensions.mainSpacing).h),
                       CustomListTileOrderDetails(
-                          title: "Email",
-                          subtitle:
-                              c.getOrderDetailsModel?.order?.user?.email ?? ""),
+                          title: "Email", subtitle: c.order?.user?.email ?? ""),
                       SizedBox(height: (AppDimensions.mainSpacing).h),
                       CustomListTileOrderDetails(
                           title: "Payment Method",
-                          subtitle:
-                              c.getOrderDetailsModel?.order?.paymentMethod ??
-                                  ""),
+                          subtitle: c.order?.paymentMethod ?? ""),
                       SizedBox(height: (AppDimensions.mainSpacing).h),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10).r,
@@ -139,8 +134,7 @@ class OrderDetailsPage extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                           color: AppColors.primaryColor),
                                     ),
-                                    ...(c.getOrderDetailsModel?.order
-                                            ?.orderItems!
+                                    ...(c.order?.orderItems!
                                             .map((e) => Column(
                                                   mainAxisSize:
                                                       MainAxisSize.min,
@@ -161,60 +155,22 @@ class OrderDetailsPage extends StatelessWidget {
                               ),
                               ColoredBox(
                                   color: Colors.green[200]!,
-                                  child: Column(
-                                    children: [
-                                      ListTile(
-                                        textColor: AppColors.primaryColor,
-                                        title: Text(
-                                          "Subtotal",
-                                          style: TextStyle(
-                                            fontSize: 16.sp,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        trailing: Text(
-                                          "\$100.00",
-                                          style: TextStyle(
-                                            fontSize: 16.sp,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
+                                  child: ListTile(
+                                    textColor: AppColors.primaryColor,
+                                    title: Text(
+                                      "Total",
+                                      style: TextStyle(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      ListTile(
-                                        textColor: AppColors.primaryColor,
-                                        title: Text(
-                                          "Shipping",
-                                          style: TextStyle(
-                                            fontSize: 16.sp,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        trailing: Text(
-                                          "\$10.00",
-                                          style: TextStyle(
-                                            fontSize: 16.sp,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
+                                    ),
+                                    trailing: Text(
+                                      "\$${c.order?.totalPrice!.toStringAsFixed(2)}",
+                                      style: TextStyle(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      ListTile(
-                                        textColor: AppColors.primaryColor,
-                                        title: Text(
-                                          "Total",
-                                          style: TextStyle(
-                                            fontSize: 16.sp,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        trailing: Text(
-                                          "\$110.00",
-                                          style: TextStyle(
-                                            fontSize: 16.sp,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   )),
                             ],
                           ),
@@ -233,20 +189,23 @@ class OrderDetailsPage extends StatelessWidget {
     required IconData icon,
     required bool isActive,
     required bool isDone,
+    StatusRequest? statusRequest,
   }) {
     return EasyStep(
         title: title,
-        customStep: CircleAvatar(
-          radius: 30.r,
-          backgroundColor: isDone
-              ? Colors.green
-              : isActive
-                  ? Colors.blue
-                  : Colors.grey,
-          child: Icon(
-            isDone ? Icons.check : icon,
-            color: AppColors.whiteColor,
-          ),
-        ));
+        customStep: statusRequest == StatusRequest.loading
+            ? const CircularProgressIndicator()
+            : CircleAvatar(
+                radius: 30.r,
+                backgroundColor: isDone
+                    ? Colors.green
+                    : isActive
+                        ? Colors.blue
+                        : Colors.grey,
+                child: Icon(
+                  isDone ? Icons.check : icon,
+                  color: AppColors.whiteColor,
+                ),
+              ));
   }
 }

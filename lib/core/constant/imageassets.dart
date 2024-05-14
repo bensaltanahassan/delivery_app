@@ -1,4 +1,6 @@
 class AppImageAsset {
+  static const String notAvailableImage =
+      "https://t3.ftcdn.net/jpg/05/03/24/40/360_F_503244059_fRjgerSXBfOYZqTpei4oqyEpQrhbpOML.jpg";
   static const String rootImages = "assets/images";
   static const String rootLotties = "assets/lotties";
   //onBoarding
